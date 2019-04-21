@@ -7,6 +7,7 @@ program
     .arguments('<elf-path>')
     .option('-l, --ldscript <path>', 'The linker script the application was linked against')
     .option('-d, --details', 'Print extra details')
+    .option('-h, --humanify', 'Print human readable sizes')
     .action(
         function(file)
         {
@@ -80,18 +81,29 @@ program
                                 function (section)
                                 {
                                     if(program.details === undefined)
-                                        return console.log("Section '%s' usage: %f%% (%d/%d bytes)", section.name, (section.used_size * 100 / section.size).toFixed(2), section.used_size, section.size);
+                                        if(program.humanify)
+                                            return console.log("Section '%s' usage: %f%% (%s/%s)", section.name, (section.used_size * 100 / section.size).toFixed(2), humanify_size(section.used_size), humanify_size(section.size));
+                                        else
+                                            return console.log("Section '%s' usage: %f%% (%d/%d bytes)", section.name, (section.used_size * 100 / section.size).toFixed(2), section.used_size, section.size);
 
                                     console.log("Section '%s':", section.name);
                                     console.log("  Start address: %s", hexpad(section.start, 8));
                                     console.log("  End address: %s", !section.size ? hexpad(section.start, 8) : hexpad(section.start + section.size - 1, 8));
                                     console.log("  Permissions: %s", section.allowed_operations);
-                                    console.log("  Total usage: %f%% (%d/%d bytes)", !section.size ? 0 : (section.used_size * 100 / section.size).toFixed(2), section.used_size, section.size);
+
+                                    if(program.humanify)
+                                        console.log("  Total usage: %f%% (%s/%s)", !section.size ? 0 : (section.used_size * 100 / section.size).toFixed(2), humanify_size(section.used_size), humanify_size(section.size));
+                                    else
+                                        console.log("  Total usage: %f%% (%d/%d bytes)", !section.size ? 0 : (section.used_size * 100 / section.size).toFixed(2), section.used_size, section.size);
+
 
                                     section.elf_sections.forEach(
                                         function (elf_section)
                                         {
-                                            console.log("  Sub-section '%s': %f%% (%d/%d bytes)", elf_section.name, (elf_section.size * 100 / section.size).toFixed(2), elf_section.size, section.size);
+                                            if(program.humanify)
+                                                console.log("  Sub-section '%s': %f%% (%s/%s)", elf_section.name, (elf_section.size * 100 / section.size).toFixed(2), humanify_size(elf_section.size), humanify_size(section.size));
+                                            else
+                                                console.log("  Sub-section '%s': %f%% (%d/%d bytes)", elf_section.name, (elf_section.size * 100 / section.size).toFixed(2), elf_section.size, section.size);
                                         }
                                     );
                                 }
@@ -113,4 +125,19 @@ function hexpad(number, length)
         str = '0' + str;
 
     return "0x" + str;
+}
+
+function humanify_size(size)
+{
+    var unit = ["B", "KB", "MB", "GB", "TB"];
+    var i = 0;
+
+    while(size > 1024 && i < 5)
+    {
+        size /= 1024;
+
+        i++;
+    }
+
+    return size.toFixed(2) + " " + unit[i];
 }
