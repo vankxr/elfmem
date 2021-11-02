@@ -2,14 +2,19 @@
   "name": "armmem",
   "version": "1.0.1",
   "description": "ARMv7-M ELF Informer",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "jsilva",
   "license": "ISC",
   "bin": {
-    "armmem": "./index.js"
+    "armmem": "./src/index.js"
+  },
+  "pkg": {
+    "scripts": "src/**/*.js",
+    "targets": [ "latest-linux-x64" ],
+    "outputPath": "dist"
   },
   "dependencies": {
     "commander": "^2.16.0",
