@@ -60,3 +60,4 @@ typings/
 # Binary packages
 dist/
 *.deb
+!.deb
