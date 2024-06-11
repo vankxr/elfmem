@@ -1,5 +1,5 @@
-Package: armmem
-Version: 1.0
+Package: elfmem
+Version: 2.0-0
 Architecture: amd64
 Maintainer: João Silva <jgc3silva@gmail.com>
-Description: Takes an ELF and a Linker Script as input and prints informations about the program
+Description: Takes an ELF and a Linker Script as input and prints informations about the memory usage
